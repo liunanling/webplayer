@@ -1,0 +1,264 @@
+* {
+  vertical-align: baseline;
+  font-weight: inherit;
+  font-family: inherit;
+  font-style: inherit;
+  font-size: 100%;
+  outline: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  line-height: 1;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -webkit-tap-highlight-color: rgba(255, 0, 0, 0);
+}
+
+html,
+body,
+.main {
+  font-family: "微软雅黑";
+  width: 100%;
+  height: 100%;
+  background: #0d0e19;
+  color: #fff;
+}
+
+.main {
+  position: relative;
+}
+
+.main .hide {
+  display: none;
+}
+
+.main .text-overflow {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.main .tr {
+  text-align: right;
+}
+
+/*-------song-wrapper---------*/
+.main .player-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: .6rem 0.22rem 0rem;
+}
+
+.player-wrapper .song-title {
+  width: 100%;
+  text-align: center;
+  font-size: .36rem;
+  font-weight: bold;
+  padding: 0 0 3px;
+  margin-bottom: .3rem;
+}
+
+.player-wrapper .player-singer {
+  margin: 0 auto;
+  width: 4.78rem;
+  height: 4.78rem;
+  border: .08rem solid rgba(255, 255, 255, .15);
+  border-radius: 100%;
+  overflow: hidden;
+  padding: 0.2rem;
+}
+
+.player-singer .img-box {
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+  transform-origin: 50% 50%;
+  background: url(../img/default.png) 0 0 no-repeat;
+  background-size: 100% 100%;
+}
+
+.player-wrapper .player-singer img {
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+}
+
+.player-wrapper .player-controls {
+  font-size: .24rem;
+  color: rgba(255, 255, 255, .5);
+  display: -webkit-box;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  height: 1.2rem;
+  -webkit-box-align: center;
+  margin-bottom: 0.1rem;
+  position: relative;
+}
+
+.player-wrapper .player-controls .controls-time {
+  float: none;
+  -webkit-box-flex: 1;
+  width: 0;
+}
+
+.player-wrapper .player-controls .controls-progress {
+  float: none;
+  -webkit-box-flex: 6;
+  width: 0;
+  display: -webkit-box;
+  -webkit-box-sizing: border-box;
+  height: 100%;
+  -webkit-box-align: center;;
+  cursor: pointer;
+}
+
+.controls-progress > div {
+  width: 100%;
+  background: rgba(255, 255, 255, .15);
+  height: 0.06rem;
+  border-radius: 8px;
+  position: relative;
+}
+
+.controls-progress p {
+  width: 1px;
+  background: rgba(255, 255, 255, .15);
+  height: 100%;
+  border-radius: 8px;
+}
+
+.controls-progress span {
+  width: 1px;
+  background: #124780;
+  height: 100%;
+  border-radius: 8px;
+  display: block;
+  position: absolute;
+  top: 0;
+}
+
+.progress-btn {
+  width: .76rem;
+  height: .76rem;
+  position: absolute;
+  top: -.34rem;
+  left: -10.512px;
+  padding: .19rem;
+}
+
+.progress-btn em {
+  width: .38rem;
+  height: .38rem;
+  background: #4191e6;
+  border-radius: 100%;
+  box-shadow: 0 0 5px 1px rgba(0, 0, 0, .8);
+  display: block;
+}
+
+.player-wrapper .player-lry {
+  text-align: center;
+  width: 100%;
+  padding: 0.1rem 0.4rem;
+  font-size: .36rem;
+  color: #4191E6;
+  overflow: hidden;
+  height: 2.1rem;
+  margin-bottom: .7rem;
+  position: relative;
+  top: 0;
+  left: 0;
+}
+
+.player-lry div {
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 1.35rem;
+}
+
+.player-wrapper .player-lry p {
+  margin-bottom: 0.35rem;
+  white-space: nowrap;
+  word-break: break-all;
+  padding:0.05rem 0;
+}
+
+.colorfff {
+  color: #fff;
+}
+
+.player-btn {
+  width: 1.54rem;
+  padding: 0.2rem;
+  margin: 0 auto;
+}
+
+.player-btn p {
+  width: 100%;
+  height: 1.14rem;
+  border: 1px solid #356293;
+  background: #124780;
+  border-radius: 100%;
+  cursor: pointer;
+}
+
+.player-btn i {
+  width: .38rem;
+  height: .38rem;
+  display: block;
+  margin: 0.38rem auto 0;
+}
+
+.icon-play {;
+  background: url(../img/public_play.png) no-repeat;
+  background-size: 100%;
+}
+
+.icon-pause {;
+  background: url(../img/public_pause.png) no-repeat;
+  background-size: 100%;
+}
+
+/*loading*/
+.loading-wrapper {
+  width: 100%;
+  position: absolute;
+  height: 1px;
+  top: 0;
+  left: 0;
+  z-index: 3;
+}
+
+.loading {
+  width: 0.49rem;
+  height: 0.49rem;
+  background: url(../img/loading.png) no-repeat;
+  background-size: 100%;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: -0.24rem;
+  margin-top: -0.24rem;
+  animation: loading 1.9s linear infinite forwards;
+  -webkit-animation: loading 1.9s linear infinite;
+}
+
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes loading {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}

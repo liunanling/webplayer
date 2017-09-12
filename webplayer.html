@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+  <meta name="format-detection" content="telephone=no, email=no"/>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="HandheldFriendly" content="true">
+  <meta name="MobileOptimized" content="320">
+  <meta name="screen-orientation" content="portrait">
+  <meta name="x5-orientation" content="portrait">
+  <meta name="full-screen" content="yes">
+  <meta name="x5-fullscreen" content="true">
+  <meta name="browsermode" content="application">
+  <meta name="x5-page-mode" content="app">
+  <meta name="msapplication-tap-highlight" content="no">
+  <title>player-一行歌词</title>
+  <link href="./css/player.css" rel="stylesheet">
+  <script>
+    var width = document.documentElement.clientWidth;
+    var height = document.documentElement.clientHeight;
+    var devWidth = height > width ? width : height;
+    if (devWidth > 750) devWidth = 750; //取短后是否会大于640
+    document.documentElement.style.fontSize = devWidth / (750 / 100) + 'px';
+  </script>
+</head>
+
+<body>
+<div class="main">
+  <section class="player-wrapper js-wrapper">
+    <div class="js-up">
+      <div class="song-title text-overflow">我在人民广场吃炸鸡</div>
+      <div class="player-singer">
+        <div class="img-box">
+          <img class="hide" src=""/>
+        </div>
+      </div>
+      <div class="player-lry" id="player_lry_par">
+        <div id="player_lry">
+
+        </div>
+      </div>
+      <div class="player-controls">
+        <div class="controls-time" id="time_curr">
+          00:00
+        </div>
+        <div class="controls-progress" id="c_track">
+          <div>
+            <p id="c_loadprogress"></p>
+            <span id="c_progress"></span>
+            <div class="progress-btn" id="c_slide">
+              <em >&nbsp;</em>
+            </div>
+          </div>
+        </div>
+        <div class="controls-time tr" id="time_total">
+          00:00
+        </div>
+        <div class="loading-wrapper">
+          <div class="loading"></div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-box js-btn" isPlay="2">
+      <div class="player-btn" id="vc_btn_play">
+        <p>
+          <i class="icon-play"></i>
+        </p>
+      </div>
+      <div class="player-btn hide" id="vc_btn_pause">
+        <p>
+          <i class="icon-pause"></i>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+<script src="./lib/jquery-1.11.2.min.js"></script>
+<script src="./lib/web_VideoPlayer/web_VideoControl.js"></script>
+<script src="./lib/web_VideoPlayer/web_VideoPlayer.js"></script>
+<script>
+  var songlist = ['./assets/阿肆 - 我在人民广场吃炸鸡.mp3'];
+  var player = new web_VideoPlayer();
+  player.autoplay = false;
+
+  var playerControl = new web_VideoControl(player);
+  playerControl.initProgress($('#c_track'), $('#c_slide'), $('#c_progress'), $('#c_loadprogress'));
+  var vc_btn_obj = {
+    btn_pause: $('#vc_btn_pause'),
+    btn_play: $('#vc_btn_play')
+  };
+  playerControl.initControl(vc_btn_obj);
+
+  var lyricList = {}, lyricTime = [];
+  var userAgent = window.navigator.userAgent.toLowerCase();
+  var tagMobile = userAgent.match(/Mobile/i);
+  if (tagMobile != "mobile") {//移动端
+    $('.player-controls .controls-time').css('text-align', 'center');
+  }
+
+  var imgSrc = 'img/d0d7e1e4b9b25c126e71847a5948be66.jpg';
+
+
+  $(function () {
+    //按钮位置计算
+    var wHeight= $('.js-wrapper').height();
+    var upHeight= $('.js-up').height();
+    var btnHeight= wHeight - upHeight - 30;
+    $('.js-btn').css("height",btnHeight+"px");
+    $('title').text($('.song-title').text());
+
+
+    $('.img-box img').attr('src', imgSrc).fadeIn(1500);
+
+    $('.btn-box .player-btn:eq(1)').removeClass('hide');
+
+    //媒体的元数据已经加载完毕
+    player.addEvent(player.events.loadedmetadata, function (e) {
+      $('#time_total').text(playerControl.timeFormat(player.duration));
+    });
+    //播放
+    player.addEvent(player.events.play, function (e) {
+      player.autoplay = true;
+      //是否播放，1：播放；2，暂停
+      $('.btn-box').attr('isPlay', '1');
+
+    });
+    //暂定
+    player.addEvent(player.events.pause, function (e) {
+      //是否播放，1：播放；2，暂停
+      $('.btn-box').attr('isPlay', '2');
+    });
+
+
+    player.addEvent(player.events.timeupdate, function (e) {
+      $('#time_curr').text(playerControl.timeFormat(e.currentTime));
+      $('#time_total').text(playerControl.timeFormat(e.duration));
+
+      //显示歌词
+      var currentTime = Math.round(e.currentTime);
+      var _index = 0;
+      for (var i = 0; i < lyricTime.length; i++) {
+        if (lyricTime[i] <= currentTime) {
+          _index = lyricTime[i];
+        }
+      }
+      var lrc = lyricList[_index];
+      $('#player_lry').text(lrc);
+    });
+
+
+    player.addEvent(player.events.seeking, function (e) {
+      var isPlay = $('.btn-box').attr('isPlay');
+      if (isPlay == 2) {
+        return false;
+      }
+      // console.log('seeking');
+      $('.loading').fadeIn(100);
+      $('.btn-box .player-btn').css('display', 'none');
+      $('.btn-box .player-btn:eq(0)').css('display', '-webkit-box');
+      //alert('seeking');
+
+    });
+
+    //在跳跃操作完成时触发
+    player.addEvent(player.events.seeked, function (e) {
+      $('.loading').fadeOut(100);
+      var isPlay = $('.btn-box').attr('isPlay');
+      if (isPlay == 2) {
+        return false;
+      }
+      console.log('seeked');
+      $('.btn-box .player-btn').css('display', 'none');
+      $('.btn-box .player-btn:eq(1)').css('display', '-webkit-box');
+    });
+
+
+    //在媒体数据已经有足够的数据（至少播放数帧）可供播放时触发。这个事件对应CAN_PLAY的readyState。
+    player.addEvent(player.events.canplay, function (e) {
+      // console.log('canplay');
+      $('.loading').fadeOut(100);
+    });
+
+    //播放结束
+    player.addEvent(player.events.ended, function (e) {
+      // console.log('ended');
+      $('.btn-box .player-btn').css('display', 'none');
+      $('.btn-box .player-btn:eq(0)').css('display', '-webkit-box');
+    });
+
+
+    player.addEvent(player.events.errors, function (e) {
+      console.log('errors');
+      var isPlay = $('.btn-box').attr('isPlay');
+      if (isPlay == 2) {
+        return false;
+      }
+      alert('网络异常');
+      $('.loading').fadeIn(100);
+      $('.btn-box .player-btn').css('display', 'none');
+      $('.btn-box .player-btn:eq(0)').css('display', '-webkit-box');
+    });
+
+
+    player.load(songlist);
+    getLyric();
+
+    //获取歌词
+    function getLyric() {
+      $.ajax({
+        type: "get",
+        url: "./assets/阿肆我在人民广场吃炸鸡.lrc",
+        data: {},
+        dataType: "text",
+        success: function (data) {
+          lyricList = parseLyric(data);
+          $('.loading').fadeOut(100);
+          /*for (var i = 0; i < lyricTime.length; i++) {
+            $('.player-lry div').append('<p>' + lyricList[lyricTime[i]] + '</p>');
+          }*/
+        },
+        error: function (xhr) {
+          console.log('错误');
+        }
+      });
+    }
+
+    //解析歌词
+    function parseLyric(lrc) {
+      var lyrics = lrc.split("\n");
+      var lrcObj = {};
+      for (var i = 0; i < lyrics.length; i++) {
+        var lyric = decodeURIComponent(lyrics[i]);
+        var timeReg = /\[\d*:\d*((\.|\:)\d*)*\]/g;
+        var timeRegExpArr = lyric.match(timeReg);
+        if (!timeRegExpArr)continue;
+        var clause = lyric.replace(timeReg, '');
+
+        for (var k = 0, h = timeRegExpArr.length; k < h; k++) {
+          var t = timeRegExpArr[k];
+          var min = Number(String(t.match(/\[\d*/i)).slice(1)),
+            sec = Number(String(t.match(/\:\d*/i)).slice(1));
+          var time = min * 60 + sec; //把时间转换成秒
+          if (clause != '') {
+            lrcObj[time] = clause;
+            lyricTime.push(time);//保存时间
+          }
+        }
+      }
+      return lrcObj;
+    }
+
+
+  });
+</script>
+</html>
